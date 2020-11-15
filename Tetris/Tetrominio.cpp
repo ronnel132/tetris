@@ -149,7 +149,7 @@ std::vector<std::tuple<int, int>> GetTetrominoCoordinates(TetrominoType type, st
 Rotation RotateNext(Rotation r, bool clockwise) {
 	int index = static_cast<int>(r);
 	int delta = clockwise ? 1 : -1;
-    return static_cast<Rotation>((index + delta) % 4);
+    return static_cast<Rotation>(((index + delta) % 4 + 4) % 4);
 }
 
 Tetromino::Tetromino(TetrominoType t, std::tuple<int, int>& start_coord) : m_type(t), m_rotation(Rotation::Zero), m_position(start_coord) {
