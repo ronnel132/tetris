@@ -117,7 +117,7 @@ public:
                 }
             }
             std::cout << "Press any key to continue..." << std::endl;
-			GetKeyPress();
+            GetKeyPress();
             toProcess.clear();
             commands.clear();
             board.Reset();
