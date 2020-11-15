@@ -7,3 +7,4 @@ A simple Tetris clone in the terminal, written in c++ written for fun.
 * down arrow  = Move Down 
 * right arrow = Move Right 
 * up arrow    = Rotate CW
+* space       = Hard Drop

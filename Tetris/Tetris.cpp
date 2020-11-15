@@ -93,6 +93,9 @@ public:
                     case 'r':
                         c = Command::MoveRight;
                         break;
+                    case ' ':
+                        c = Command::HardDrop;
+                        break;
                     default:
                         c = Command::None;
                         break;

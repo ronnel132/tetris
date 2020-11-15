@@ -193,6 +193,11 @@ void Tetromino::ProcessCommand(const Board& board, Command c) {
 		newRotation = RotateNext(m_rotation, false);
 		newCoords = GetTetrominoCoordinates(m_type, m_position, newRotation);
 		break;
+	case Command::HardDrop:
+		while (!HasContact(board)) {
+			ProcessCommand(board, Command::MoveDown);
+		}
+		return;
 	}
 	for (auto& coord : newCoords) {
 		std::get<0>(coord) += dx;

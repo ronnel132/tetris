@@ -8,7 +8,8 @@ enum class Command {
     MoveLeft,
     MoveRight,
     RotateCW,
-    RotateCCW
+    RotateCCW,
+    HardDrop
 };
 
 enum class TetrominoType {
