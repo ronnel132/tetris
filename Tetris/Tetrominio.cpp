@@ -156,7 +156,7 @@ Tetromino::Tetromino(TetrominoType t, std::tuple<int, int>& start_coord) : m_typ
 	m_coords = GetTetrominoCoordinates(m_type, m_position, Rotation::Zero);
 }
 
-bool Tetromino::HasCollision(const Board& board, std::vector<std::tuple<int, int>>& coords) const {
+bool Tetromino::HasCollision(const Board& board, const std::vector<std::tuple<int, int>>& coords) const {
 	for (auto& coord : coords) {
 		int x = std::get<0>(coord);
 		int y = std::get<1>(coord);

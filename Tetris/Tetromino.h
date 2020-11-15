@@ -35,12 +35,12 @@ private:
     std::tuple<int, int> m_position;
     Rotation m_rotation;
     std::vector<std::tuple<int, int>> m_coords;
-    bool HasCollision(const Board& board, std::vector<std::tuple<int, int>>& coords) const;
 public:
     Tetromino(TetrominoType t, std::tuple<int, int>& start_coord);
     void ProcessCommand(const Board& board, Command c);
     const std::vector<std::tuple<int, int>>& GetCoords() const;
     bool HasContact(const Board& board) const;
+    bool HasCollision(const Board& board, const std::vector<std::tuple<int, int>>& coords) const;
 };
 
 TetrominoType GetRandomTetromino();

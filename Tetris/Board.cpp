@@ -1,10 +1,11 @@
 #include <iostream>
+#include <memory>
 #include <set>
 #include <tuple>
 
 #include "Board.h"
 
-Board::Board() : m_active(nullptr), m_board(WIDTH * HEIGHT) {
+Board::Board() : m_active(nullptr), m_board(WIDTH * HEIGHT), m_gameOver(false) {
 	for (int i = 0; i < HEIGHT; i++) {
 		for (int j = 0; j < WIDTH; j++) {
 			m_board[i * WIDTH + j] = false;
@@ -12,11 +13,10 @@ Board::Board() : m_active(nullptr), m_board(WIDTH * HEIGHT) {
 	}
 }
 
-Board::~Board() {
-	delete m_active;
-}
-
 void Board::Render() const {
+	if (m_gameOver) {
+		std::cout << "GAME OVER." << std::endl;;
+	}
 	std::cout << "############" << std::endl;
 
 	for (int i = 0; i < HEIGHT; i++) {
@@ -47,6 +47,13 @@ void Board::Render() const {
 void Board::ProcessCommand(Command c) {
 	if (!m_active) return;
 	m_active->ProcessCommand(*this, c);
+	if (c == Command::HardDrop) {
+		system("cls");
+		// One tick merge the active tetromino into the board, another to init the new tetromino
+		ProcessTick();
+		ProcessTick();
+		Render();
+	}
 }
 
 void Board::ClearLines() {
@@ -85,7 +92,10 @@ void Board::ProcessTick() {
 	if (!m_active) {
 		TetrominoType t = GetRandomTetromino();
 		std::tuple<int, int> startCoord(4, 0);
-		m_active = new Tetromino(t, startCoord);
+		m_active = std::make_unique<Tetromino>(t, startCoord);
+		if (m_active->HasCollision(*this, m_active->GetCoords())) {
+			m_gameOver = true;
+		}
 		return;
 	}
 	if (m_active->HasContact(*this)) {
@@ -100,5 +110,15 @@ void Board::ProcessTick() {
 	}
 	else {
 		m_active->ProcessCommand(*this, Command::MoveDown);
+	}
+}
+
+void Board::Reset() {
+	m_active = nullptr;
+	m_gameOver = false;
+	for (int i = 0; i < HEIGHT; i++) {
+		for (int j = 0; j < WIDTH; j++) {
+			m_board[i * WIDTH + j] = false;
+		}
 	}
 }

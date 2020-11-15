@@ -67,53 +67,60 @@ public:
         std::deque<char> toProcess;
         auto lastTick = clock::now();
         while (true) {
-            {
-                std::unique_lock<std::mutex> lock{ mutex };
-                if (cv.wait_for(lock, std::chrono::seconds(0), [&] { return !commands.empty(); })) {
-                    std::swap(commands, toProcess);
-                }
-            }
-
-            if (!toProcess.empty()) {
-                for (auto&& key: toProcess) {
-                    Command c;
-                    switch (key) {
-                    case 'u':
-                        c = Command::RotateCW;
-                        break;
-                    case 'z':
-                        c = Command::RotateCCW;
-                        break;
-                    case 'd':
-                        c = Command::MoveDown;
-                        break;
-                    case 'l':
-                        c = Command::MoveLeft;
-                        break;
-                    case 'r':
-                        c = Command::MoveRight;
-                        break;
-                    case ' ':
-                        c = Command::HardDrop;
-                        break;
-                    default:
-                        c = Command::None;
-                        break;
+            while (!board.GameOver()) {
+                {
+                    std::unique_lock<std::mutex> lock{ mutex };
+                    if (cv.wait_for(lock, std::chrono::seconds(0), [&] { return !commands.empty(); })) {
+                        std::swap(commands, toProcess);
                     }
-                    board.ProcessCommand(c);
                 }
-                system("cls");
-                board.Render();
-                toProcess.clear();
-            }
 
-            auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now() - lastTick);
-            if (delta.count() >= TICK_INTERVAL_MS) {
-                lastTick = clock::now();
-				system("cls");
-				board.ProcessTick();
-				board.Render();
+                if (!toProcess.empty()) {
+                    for (auto&& key : toProcess) {
+                        Command c;
+                        switch (key) {
+                        case 'u':
+                            c = Command::RotateCW;
+                            break;
+                        case 'z':
+                            c = Command::RotateCCW;
+                            break;
+                        case 'd':
+                            c = Command::MoveDown;
+                            break;
+                        case 'l':
+                            c = Command::MoveLeft;
+                            break;
+                        case 'r':
+                            c = Command::MoveRight;
+                            break;
+                        case ' ':
+                            c = Command::HardDrop;
+                            break;
+                        default:
+                            c = Command::None;
+                            break;
+                        }
+                        board.ProcessCommand(c);
+                    }
+                    system("cls");
+                    board.Render();
+                    toProcess.clear();
+                }
+
+                auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(clock::now() - lastTick);
+                if (delta.count() >= TICK_INTERVAL_MS) {
+                    lastTick = clock::now();
+                    system("cls");
+                    board.ProcessTick();
+                    board.Render();
+                }
             }
+            std::cout << "Press any key to continue..." << std::endl;
+			GetKeyPress();
+            toProcess.clear();
+            commands.clear();
+            board.Reset();
         }
     }
 };
