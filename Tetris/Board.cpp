@@ -5,7 +5,10 @@
 
 #include "Board.h"
 
-Board::Board() : m_active(nullptr), m_board(WIDTH * HEIGHT), m_gameOver(false) {
+Board::Board() : m_active(nullptr), m_hold(nullptr), m_board(WIDTH * HEIGHT), m_gameOver(false), m_score(0) {
+    TetrominoType t = GetRandomTetromino();
+    std::tuple<int, int> startCoord(4, 0);
+    m_nextActive = std::make_unique<Tetromino>(t, startCoord);
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             m_board[i * WIDTH + j] = false;
@@ -17,7 +20,8 @@ void Board::Render() const {
     if (m_gameOver) {
         std::cout << "GAME OVER." << std::endl;;
     }
-    std::cout << "############" << std::endl;
+    std::cout << "############ SCORE: ";
+    std::cout << m_score << std::endl;
 
     for (int i = 0; i < HEIGHT; i++) {
         std::cout << "#";
@@ -38,7 +42,21 @@ void Board::Render() const {
                 std::cout << " ";
             }
         }
-        std::cout << "#" << std::endl;
+        std::cout << "#";
+        if (i == 0) {
+            std::cout << " NEXT: " << m_nextActive->TypeToString() << std::endl;
+        }
+        else if (i == 1) {
+            if (m_hold) {
+                std::cout << " HOLD: " << m_hold->TypeToString() << std::endl;
+            }
+            else {
+                std::cout << " HOLD: " << std::endl;
+            }
+        }
+        else {
+            std::cout << std::endl;
+        }
     }
 
     std::cout << "############" << std::endl;
@@ -46,13 +64,21 @@ void Board::Render() const {
 
 void Board::ProcessCommand(Command c) {
     if (!m_active) return;
-    m_active->ProcessCommand(*this, c);
-    if (c == Command::HardDrop) {
-        system("cls");
-        // One tick merge the active tetromino into the board, another to init the new tetromino
-        ProcessTick();
-        ProcessTick();
-        Render();
+    if (c == Command::Hold) {
+        std::tuple<int, int> startCoord(4, 0);
+        m_active->Reset(startCoord);
+        if (m_hold) {
+            m_hold.swap(m_active);
+        }
+        else {
+            TetrominoType t = GetRandomTetromino();
+            m_hold.swap(m_active);
+            m_active = std::move(m_nextActive);
+            m_nextActive = std::make_unique<Tetromino>(t, startCoord);
+        }
+    }
+    else {
+        m_active->ProcessCommand(*this, c);
     }
 }
 
@@ -86,13 +112,15 @@ void Board::ClearLines() {
         i_prime--;
     }
     m_board = newBoard;
+    m_score += linesToClear.size();
 }
 
 void Board::ProcessTick() {
     if (!m_active) {
         TetrominoType t = GetRandomTetromino();
         std::tuple<int, int> startCoord(4, 0);
-        m_active = std::make_unique<Tetromino>(t, startCoord);
+        m_active = std::move(m_nextActive);
+        m_nextActive = std::make_unique<Tetromino>(t, startCoord);
         if (m_active->HasCollision(*this, m_active->GetCoords())) {
             m_gameOver = true;
         }
@@ -116,6 +144,7 @@ void Board::ProcessTick() {
 void Board::Reset() {
     m_active = nullptr;
     m_gameOver = false;
+    m_score = 0;
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             m_board[i * WIDTH + j] = false;

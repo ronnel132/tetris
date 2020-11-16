@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Board;
 enum class Command {
     None,
@@ -9,7 +11,8 @@ enum class Command {
     MoveRight,
     RotateCW,
     RotateCCW,
-    HardDrop
+    HardDrop,
+    Hold
 };
 
 enum class TetrominoType {
@@ -41,6 +44,8 @@ public:
     const std::vector<std::tuple<int, int>>& GetCoords() const;
     bool HasContact(const Board& board) const;
     bool HasCollision(const Board& board, const std::vector<std::tuple<int, int>>& coords) const;
+    void Reset(std::tuple<int, int>& startCoord);
+    std::string TypeToString() const;
 };
 
 TetrominoType GetRandomTetromino();

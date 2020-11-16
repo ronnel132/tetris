@@ -96,6 +96,14 @@ public:
                             break;
                         case ' ':
                             c = Command::HardDrop;
+                            // One tick merge the active tetromino into the board, another to init the new tetromino
+                            board.ProcessCommand(c);
+                            system("cls");
+                            board.ProcessTick();
+                            board.Render();
+                            continue;
+                        case 'c':
+                            c = Command::Hold;
                             break;
                         default:
                             c = Command::None;

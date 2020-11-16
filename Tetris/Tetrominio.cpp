@@ -4,7 +4,6 @@
 #include "Tetromino.h"
 #include "Board.h"
 
-
 TetrominoType GetRandomTetromino() {
     return static_cast<TetrominoType>(rand() % static_cast<int>(TetrominoType::Z));
 }
@@ -156,6 +155,12 @@ Tetromino::Tetromino(TetrominoType t, std::tuple<int, int>& start_coord) : m_typ
     m_coords = GetTetrominoCoordinates(m_type, m_position, Rotation::Zero);
 }
 
+void Tetromino::Reset(std::tuple<int, int>& startCoord) {
+    m_coords = GetTetrominoCoordinates(m_type, startCoord, Rotation::Zero);
+    m_rotation = Rotation::Zero;
+    m_position = startCoord;
+}
+
 bool Tetromino::HasCollision(const Board& board, const std::vector<std::tuple<int, int>>& coords) const {
     for (auto& coord : coords) {
         int x = std::get<0>(coord);
@@ -166,6 +171,27 @@ bool Tetromino::HasCollision(const Board& board, const std::vector<std::tuple<in
         if (board.GetBoardValue(y, x)) return true;
     }
     return false;
+}
+
+std::string Tetromino::TypeToString() const {
+    switch (m_type) {
+    case TetrominoType::I:
+        return "I";
+    case TetrominoType::J:
+        return "J";
+    case TetrominoType::L:
+        return "L";
+    case TetrominoType::O:
+        return "O";
+    case TetrominoType::S:
+        return "S";
+    case TetrominoType::Z:
+        return "Z";
+    case TetrominoType::T:
+        return "T";
+    default:
+        return " ";
+    }
 }
 
 void Tetromino::ProcessCommand(const Board& board, Command c) {

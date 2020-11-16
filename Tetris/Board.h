@@ -6,8 +6,11 @@
 class Board {
 private:
     std::unique_ptr<Tetromino> m_active;
+    std::unique_ptr<Tetromino> m_nextActive;
+    std::unique_ptr<Tetromino> m_hold;
     bool m_gameOver;
     std::vector<bool> m_board;
+    unsigned int m_score;
     static const int WIDTH = 10;
     static const int HEIGHT = 20;
 
