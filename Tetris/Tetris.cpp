@@ -18,7 +18,7 @@ private:
     static const unsigned int TICK_INTERVAL_MS = 1000;
     static char GetKeyPress()
     {
-		// http://www.cplusplus.com/forum/general/52803/#msg286178
+        // http://www.cplusplus.com/forum/general/52803/#msg286178
         char key = 127;
 
         key = _getch();
