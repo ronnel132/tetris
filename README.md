@@ -1,5 +1,5 @@
 # Tetris Clone #
-A simple Tetris clone in the terminal, written in c++ written for fun.
+A simple Tetris clone in the terminal, written in C++.
 
 ## Commands ##
 * z           = Rotate CCW
