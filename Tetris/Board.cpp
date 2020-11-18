@@ -144,6 +144,7 @@ void Board::ProcessTick() {
 void Board::Reset() {
     m_active = nullptr;
     m_gameOver = false;
+    m_hold = nullptr;
     m_score = 0;
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
